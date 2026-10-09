@@ -1,6 +1,6 @@
 {
-  "buildCommand": "yarn build",
-  "outputDirectory": "build",
-  "installCommand": "yarn install",
+  "framework": null,
+  "buildCommand": "cd app/frontend && yarn install && yarn build",
+  "outputDirectory": "app/frontend/build",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
