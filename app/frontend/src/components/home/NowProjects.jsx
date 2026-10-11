@@ -1,4 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
 import { Reveal, MaskLine } from "@/components/motion";
 import { GlowCard } from "@/components/ui-kit";
 import { CURRENT_PROJECTS } from "@/data/content";
@@ -19,9 +18,6 @@ export const NowProjects = () => (
             <div className="relative aspect-[16/9] overflow-hidden bg-[#06263c]">
               <img src={p.img} alt="" className="w-full h-full object-cover grayscale contrast-125 opacity-50 mix-blend-luminosity transition-transform duration-[1.2s] ease-out group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#041a2a] via-[#06304a]/40 to-[#0b5a8a]/30 mix-blend-multiply" />
-              <span className="absolute top-4 right-4 w-10 h-10 grid place-items-center rounded-full bg-[#fdf0d5] text-[#06090d] opacity-0 -translate-y-2 transition-[opacity,transform] duration-500 group-hover:opacity-100 group-hover:translate-y-0">
-                <ArrowUpRight className="w-5 h-5" />
-              </span>
             </div>
             <div className="p-6">
               <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent">{p.type}</p>
