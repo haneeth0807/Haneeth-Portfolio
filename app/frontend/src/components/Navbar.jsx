@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -14,33 +15,35 @@ export const NAV = [
   { to: "/contact", label: "Contact Me", id: "contact" },
 ];
 
-const MobileMenu = ({ open, onClose, pathname }) => (
-  <AnimatePresence>
-    {open && (
-      <motion.div
-        data-testid="mobile-menu"
-        initial={{ clipPath: "inset(0 0 100% 0)" }}
-        animate={{ clipPath: "inset(0 0 0% 0)" }}
-        exit={{ clipPath: "inset(0 0 100% 0)" }}
-        transition={{ duration: 0.6, ease: EASE }}
-        className="fixed inset-0 z-40 bg-canvas flex flex-col justify-center px-8 md:hidden"
-      >
-        {NAV.map((l, i) => (
-          <motion.div key={l.id} initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 + i * 0.06, ease: EASE, duration: 0.6 }}>
-            <Link
-              to={l.to}
-              onClick={onClose}
-              data-testid={`mobile-nav-link-${l.id}`}
-              className={`block py-3 font-display font-bold text-4xl ${pathname === l.to ? "text-fg" : "text-dim"}`}
-            >
-              {l.label}
-            </Link>
-          </motion.div>
-        ))}
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
+const MobileMenu = ({ open, onClose, pathname }) =>
+  createPortal(
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          data-testid="mobile-menu"
+          initial={{ clipPath: "inset(0 0 100% 0)" }}
+          animate={{ clipPath: "inset(0 0 0% 0)" }}
+          exit={{ clipPath: "inset(0 0 100% 0)" }}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="fixed inset-0 z-[55] bg-canvas flex flex-col justify-center px-8 md:hidden"
+        >
+          {NAV.map((l, i) => (
+            <motion.div key={l.id} initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 + i * 0.06, ease: EASE, duration: 0.6 }}>
+              <Link
+                to={l.to}
+                onClick={onClose}
+                data-testid={`mobile-nav-link-${l.id}`}
+                className={`block py-3 font-display font-bold text-4xl ${pathname === l.to ? "text-fg" : "text-dim"}`}
+              >
+                {l.label}
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
+    </AnimatePresence>,
+    document.body
+  );
 
 export const Navbar = () => {
   const { pathname } = useLocation();

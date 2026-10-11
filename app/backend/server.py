@@ -6,13 +6,17 @@ import os
 import re
 import time
 import uuid
+import asyncio
 import logging
+import smtplib
 import ipaddress
 import httpx
 from html import escape
 from html.parser import HTMLParser
 from urllib.parse import urlparse
 from pathlib import Path
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime, timezone
 
@@ -25,12 +29,11 @@ db = client[os.environ['DB_NAME']]
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-EMAIL_BASE_URL = "https://integrations.emergentagent.com"
-EMAIL_KEY = os.environ["EMERGENT_EMAIL_KEY"]
 EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
-EMAIL_REPLY_TO = os.environ.get("EMAIL_REPLY_TO")
-OWNER_EMAIL = os.environ["OWNER_EMAIL"]
-GITHUB_USER = os.environ["GITHUB_USER"]
+GMAIL_USER     = os.environ["GMAIL_USER"]
+GMAIL_PASS     = os.environ["GMAIL_APP_PASSWORD"]
+OWNER_EMAIL    = os.environ["OWNER_EMAIL"]
+GITHUB_USER    = os.environ["GITHUB_USER"]
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -109,16 +112,23 @@ def _assert_safe_email(subject: str, html: str) -> None:
                 raise ValueError(f"Anchor text {m.group(1)!r} ≠ real link host {real!r} (G3)")
 
 
-async def send_email(*, to: str, subject: str, html: str) -> str | None:
+def _send_smtp(to: str, subject: str, html: str, reply_to: str | None) -> None:
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = f"{EMAIL_FROM_NAME} <{GMAIL_USER}>"
+    msg["To"]      = to
+    if reply_to:
+        msg["Reply-To"] = reply_to
+    msg.attach(MIMEText(html, "html"))
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(GMAIL_USER, GMAIL_PASS)
+        smtp.sendmail(GMAIL_USER, to, msg.as_string())
+
+
+async def send_email(*, to: str, subject: str, html: str, reply_to: str | None = None) -> None:
     _assert_safe_email(subject, html)
-    payload = {"to": [to], "subject": subject, "html": html, "from_name": EMAIL_FROM_NAME}
-    if EMAIL_REPLY_TO:
-        payload["contact_email"] = EMAIL_REPLY_TO
-    async with httpx.AsyncClient(timeout=30) as http:
-        resp = await http.post(f"{EMAIL_BASE_URL}/api/v1/email/send",
-                               headers={"X-Email-Key": EMAIL_KEY}, json=payload)
-    resp.raise_for_status()
-    return resp.json().get("id")
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, _send_smtp, to, subject, html, reply_to)
 
 
 def _contact_template(name: str, email: str, message: str) -> str:
@@ -182,8 +192,12 @@ async def root():
 
 async def _notify_owner(contact_id: str, name: str, email: str, message: str):
     try:
-        await send_email(to=OWNER_EMAIL, subject=f"New portfolio message from {name[:60]}",
-                         html=_contact_template(name, email, message))
+        await send_email(
+            to=OWNER_EMAIL,
+            subject=f"New portfolio message from {name[:60]}",
+            html=_contact_template(name, email, message),
+            reply_to=email,
+        )
         await db.contacts.update_one({"id": contact_id}, {"$set": {"email_sent": True}})
     except Exception as e:
         logger.error(f"Contact email failed: {e}")
@@ -219,8 +233,15 @@ async def github_contributions():
         if _gh_cache["data"]:
             return _gh_cache["data"]
         raise HTTPException(status_code=502, detail="Could not load GitHub contributions")
-    data = {"user": GITHUB_USER, "total": raw.get("total", {}).get("lastYear", 0),
-            "contributions": raw.get("contributions", [])}
+
+    # API may return total as {"lastYear": N}, {"2024": N}, or just N
+    total_raw = raw.get("total", 0)
+    if isinstance(total_raw, dict):
+        total = total_raw.get("lastYear") or next(iter(total_raw.values()), 0)
+    else:
+        total = total_raw or 0
+
+    data = {"user": GITHUB_USER, "total": total, "contributions": raw.get("contributions", [])}
     _gh_cache.update(ts=time.time(), data=data)
     return data
 
