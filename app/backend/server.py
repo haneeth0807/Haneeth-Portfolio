@@ -214,7 +214,10 @@ async def create_contact(payload: ContactIn, request: Request, background: Backg
 
     doc = ContactOut(id=str(uuid.uuid4()), name=payload.name, email=payload.email,
                      message=payload.message, created_at=datetime.now(timezone.utc).isoformat())
-    await db.contacts.insert_one({**doc.model_dump(), "email_sent": False})
+    try:
+        await db.contacts.insert_one({**doc.model_dump(), "email_sent": False})
+    except Exception as e:
+        logger.warning(f"MongoDB insert failed (email will still send): {e}")
     background.add_task(_notify_owner, doc.id, doc.name, doc.email, doc.message)
     return doc
 
