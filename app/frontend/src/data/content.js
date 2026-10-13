@@ -34,11 +34,11 @@ export const ME_MAP = [
     label: "Movies & Shows",
     tagline: "Stories I keep coming back to.",
     why: [
-      "I LOVEEE watching all kinds of movies and shows and series'. I am a very big MCU fan and also ive watched most of the famous and classic english movies. I love when movies try something new and interesting. I love thrillers and also sometimes watch romcoms.I also loveee sitcoms- Brooklyn99, Modern family, Big bang theory, young sheldon, Malcolm in the middle. All bangers. Some underrated movie picks of mine  would be Predestination and Ready Player One. I love them both so much. Predestination is a proper mindfuck movie and I love rpo because it is my dream, as I love all things pop culture and it was such a great premise and story, the book was amazing too.",
+      "I LOVEEE watching all kinds of movies and shows and series'. I am a very big MCU fan and also ive watched most of the famous and classic english movies. I love when movies try something new and interesting. I love thrillers and also sometimes watch romcoms.I also loveee sitcoms- Brooklyn99, Modern Family, Big Bang Theory, Young Sheldon, Malcolm in the Middle. All bangers. Some underrated movie picks of mine  would be Predestination and Ready Player One. I love them both so much. Predestination is a proper mindfuck movie and I love rpo because it is my dream, as I love all things pop culture and it was such a great premise and story, the book was amazing too.",
     ],
     items: [
       { name: "Favourite Movie - Shutter Island", note: "My all time favourite. Go in knowing as little as possible. The suspense, the background music, the cinematography and the twist. Perfection." },
-      { name: "Favourite Show - GOT", note: "The politics, the characters, the betrayals, the world building, the ruthlessness. Absolutre gold standard. ." },
+      { name: "Favourite Show - GOT", note: "The politics, the characters, the betrayals, the world building, the ruthlessness. Absolute gold standard." },
       { name: "Comfort rewatch - B99", note: "I am quiet literally Jake Peralta." },
       { name: "Letterboxd top 4", note: "Shutter Island, Endgame, Dead Poets Society, Oppenheimer" },
     ],
@@ -67,7 +67,7 @@ export const ME_MAP = [
       "I love all my friends- the ones from nairobi shaped my nostalgic childhood, the ones from mumbai were with me at the most pivotal time of my teens when we went through the whole jee and covid fiasco together, the ones from bangalore gave me the best 3 years of my life in college. I love them all so much.",
     ],
     items: [
-      { name: "Role Model- Cristiano Ronaldo", note: "To those who understand, theres nothing I need to say. To those who can't theres nothing I can say." },
+      { name: "Role Model- Cristiano Ronaldo", note: "To those who understand, theres nothing I need to say. To those who can't, theres nothing I can say." },
       { name: "Family and Friends", note: "Nothing I say can be enough." },
     ],
   },
@@ -95,7 +95,7 @@ export const ME_MAP = [
     items: [
       { name: "Pop Culture", note: "Movies, shows, fictional universes, fan theories, and why a particular character deserved better." },
       { name: "Sports", note: "Playing them, watching them, debating them. I can probably make time for all three." },
-      { name: "History & Geopolitics", note: "You better not start talking about the greeks or Modi." },
+      { name: "History & Geopolitics", note: "You better not start talking about the Greeks or Modi." },
       { name: "Science & Geography", note: "The world is a fascinating place, and I have an unreasonable number of questions about it." },
     ],
   },
@@ -126,7 +126,7 @@ export const ME_MAP = [
       { name: "Football", note: "My favourite sport. One of the best ways to spend an evening." },
       { name: "Cricket", note: "Just don't ask me to fetch the ball when it gets hit into a gutter or the neighboring society." },
       { name: "Hockey and Rugby", note: "2 sports nobody believes I played." },
-      { name: "Athletics and Swimming", note: "One day I am going to complete and Ironman and you won't laugh at my pace anymore." },
+      { name: "Athletics and Swimming", note: "One day I am going to complete an Ironman and you won't laugh at my pace anymore." },
     ],
   },
   {
@@ -146,7 +146,7 @@ export const ME_MAP = [
     label: "Things I Want to Learn",
     tagline: "The never-ending list.",
     why: [
-      "I probably mentioned it too many times in this site already buy again lol. I wanna be a know it all. I wanna learn and become good at as many things as possible and becoming somewhat of a polymath. I wanna be good at sports, be fit, learn all kinds of tech. I am also very into learning science, geography, history, geopolitics, etc. The hindi word 'Chull' describes me perfectly. I have the chull to learn and do everything.",
+      "I probably mentioned it too many times in this site already but again lol. I wanna be a know it all. I wanna learn and become good at as many things as possible and becoming somewhat of a polymath. I wanna be good at sports, be fit, learn all kinds of tech. I am also very into learning science, geography, history, geopolitics, etc. The hindi word 'Chull' describes me perfectly. I have the chull to learn and do everything.",
     ],
     items: [
       { name: "Language", note: "Currently learning French and High Valyrian. Don't ask why." },
@@ -274,7 +274,7 @@ export const SKILLS = [
 export const SIDE_PROJECTS = [
   {
     title: "Spotify Podcast",
-    text: "I am a generally a person who doesn't talk much and mostly keeps my thoughts to myself. I wanted to change that, so I started this randomly one time during vacations. Didn't really start it for the views but figured it'll also help me improve my speaking skills. Posted a couple episodes but haven't really been constant with it.",
+    text: "I am a generally a person who likes to talk about any random BS but mostly keeps my actual thoughts and opinions to myself. I wanted to change that, so I started this randomly one time during vacations. Didn't really start it for the views but figured it'll also help me improve my speaking skills. Posted a couple episodes but haven't really been constant with it.",
     cta: "Listen on Spotify",
     href: "https://open.spotify.com/show/6NFvYj8aemPLxzFIXIGmRA?si=e9984636fe3d4f91",
     kind: "podcast",
