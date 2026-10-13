@@ -31,7 +31,7 @@ export const StoryCarousel = () => {
           <p className="mt-2 text-sm text-dim">{next.preview}</p>
         </GlowCard>
         <div className="hidden lg:block"><ArrowBtn onClick={() => go(-1)} testId="story-prev-button" label="Previous"><ChevronLeft /></ArrowBtn></div>
-        <GlowCard data-testid="story-main-card" className="min-h-[320px] p-8 md:p-10 pb-16 md:pb-16 relative">
+        <GlowCard data-testid="story-main-card" className="h-[320px] p-8 md:p-10 pb-16 md:pb-16 relative overflow-hidden">
           <AnimatePresence mode="wait" custom={dir}>
             <motion.div
               key={idx}
@@ -39,11 +39,11 @@ export const StoryCarousel = () => {
               animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
               exit={{ opacity: 0, x: dir >= 0 ? -60 : 60, filter: "blur(6px)" }}
               transition={{ duration: 0.55, ease: EASE }}
-              className="text-center"
+              className="text-center h-full flex flex-col"
             >
-              <span className="font-mono text-xs text-accent">0{idx + 1} / 0{STORY.length}</span>
-              <h3 className="mt-3 font-display font-bold text-2xl md:text-3xl text-fg">{cur.title}</h3>
-              <div className="mt-4 max-w-xl mx-auto space-y-4 text-lg text-dim">
+              <span className="font-mono text-xs text-accent shrink-0">0{idx + 1} / 0{STORY.length}</span>
+              <h3 className="mt-3 font-display font-bold text-2xl md:text-3xl text-fg shrink-0">{cur.title}</h3>
+              <div className="mt-4 max-w-xl mx-auto space-y-4 text-lg text-dim overflow-y-auto flex-1 pr-2">
                 {[].concat(cur.text).map((p, i) => <p key={i}>{p}</p>)}
               </div>
             </motion.div>
