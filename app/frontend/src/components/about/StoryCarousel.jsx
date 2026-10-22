@@ -31,7 +31,7 @@ export const StoryCarousel = () => {
           <p className="mt-2 text-sm text-dim">{next.preview}</p>
         </GlowCard>
         <div className="hidden lg:block"><ArrowBtn onClick={() => go(-1)} testId="story-prev-button" label="Previous"><ChevronLeft /></ArrowBtn></div>
-        <GlowCard data-testid="story-main-card" className="h-[450px] p-8 md:p-10 pb-16 md:pb-16 relative overflow-hidden">
+        <GlowCard data-testid="story-main-card" className="h-[550px] p-8 md:p-10 pb-16 md:pb-16 relative overflow-hidden">
           <AnimatePresence mode="wait" custom={dir}>
             <motion.div
               key={idx}
