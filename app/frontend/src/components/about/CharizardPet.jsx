@@ -1,49 +1,45 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-// ─── Tune these to match your actual GIF dimensions ───────────────────────────
-const SPRITE_W = 96;  // px
-const SPRITE_H = 96;  // px
+// ─── Adjust to your actual GIF pixel dimensions ──────────────────────────────
+const W = 160;
+const H = 160;
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ACTIONS = [
-  // key            src                                    weight  moves  yMin  yMax  speed(px/s)  stayMs
-  { key: "fly",          src: "/img/charizard/fly.gif",          w: 40, moves: true,  yMin: 0.00, yMax: 0.60, speed: 160, stay: [1500, 3000] },
-  { key: "walk",         src: "/img/charizard/walk.gif",         w: 22, moves: true,  yMin: 0.65, yMax: 1.00, speed: 65,  stay: [1500, 2500] },
-  { key: "idle",         src: "/img/charizard/idle.gif",         w: 18, moves: false, yMin: 0.30, yMax: 0.85, speed: 0,   stay: [2000, 4000] },
-  { key: "flamethrower", src: "/img/charizard/flamethrower.gif", w: 12, moves: false, yMin: 0.10, yMax: 0.65, speed: 0,   stay: [2000, 3200] },
-  { key: "sleep",        src: "/img/charizard/sleep.gif",        w: 8,  moves: false, yMin: 0.70, yMax: 1.00, speed: 0,   stay: [4000, 8000] },
+  // diagonal:true  → fly can move on both axes
+  // diagonal:false → walk moves horizontally only (ty stays locked)
+  { key: "fly",          src: "/img/charizard/fly.gif",          weight: 40, moves: true,  diagonal: true,  yMin: 0.05, yMax: 0.55, speed: 80,  stay: [3000, 6500] },
+  { key: "walk",         src: "/img/charizard/walk.gif",         weight: 22, moves: true,  diagonal: false, yMin: 0.60, yMax: 0.92, speed: 32,  stay: [3000, 5500] },
+  { key: "idle",         src: "/img/charizard/idle.gif",         weight: 18, moves: false, diagonal: false, yMin: 0.20, yMax: 0.80, speed: 0,   stay: [4000, 8000] },
+  { key: "flamethrower", src: "/img/charizard/flamethrower.gif", weight: 12, moves: false, diagonal: false, yMin: 0.10, yMax: 0.60, speed: 0,   stay: [4000, 7000] },
+  { key: "sleep",        src: "/img/charizard/sleep.gif",        weight:  8, moves: false, diagonal: false, yMin: 0.65, yMax: 0.95, speed: 0,   stay: [8000, 16000] },
 ];
 
-const TOTAL = ACTIONS.reduce((s, a) => s + a.w, 0);
+const TOTAL = ACTIONS.reduce((s, a) => s + a.weight, 0);
 const rand  = (lo, hi) => lo + Math.random() * (hi - lo);
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-
-const pick = () => {
+const pick  = () => {
   let r = Math.random() * TOTAL;
-  for (const a of ACTIONS) { r -= a.w; if (r <= 0) return a; }
+  for (const a of ACTIONS) { r -= a.weight; if (r <= 0) return a; }
   return ACTIONS[0];
 };
 
 export const CharizardPet = () => {
-  const wrapRef  = useRef(null);
-  const posRef   = useRef(null);   // null until first tick
+  const posRef   = useRef(null);
   const timerRef = useRef(null);
 
   const [action,  setAction]  = useState(ACTIONS[0]);
-  const [pos,     setPos]     = useState({ x: -200, y: 0 }); // off-screen until first tick
+  const [pos,     setPos]     = useState({ x: -400, y: 0 }); // off-screen until first tick
   const [moveDur, setMoveDur] = useState(0.5);
-  const [facing,  setFacing]  = useState(1); // 1 = right, -1 = left (mirrors the sprite)
+  const [facing,  setFacing]  = useState(1); // 1 = right, -1 = left
 
   const tick = useCallback(() => {
-    const wrap = wrapRef.current;
-    if (!wrap) return;
-
-    const maxX = wrap.offsetWidth  - SPRITE_W;
-    const maxY = wrap.offsetHeight - SPRITE_H;
+    const maxX = window.innerWidth  - W;
+    const maxY = window.innerHeight - H;
     if (maxX <= 0 || maxY <= 0) { timerRef.current = setTimeout(tick, 400); return; }
 
-    // Place at a sensible starting position on first tick
+    // Place at a sane starting position on the very first tick
     if (!posRef.current) {
       const sx = clamp(rand(maxX * 0.2, maxX * 0.8), 0, maxX);
       const sy = clamp(rand(maxY * 0.2, maxY * 0.6), 0, maxY);
@@ -54,18 +50,28 @@ export const CharizardPet = () => {
     const a   = pick();
     const cur = posRef.current;
     let tx    = cur.x;
-    let ty    = clamp(rand(a.yMin * maxY, a.yMax * maxY), 0, maxY);
-    let dur   = 0.8;
+    let ty    = cur.y;
+    let dur   = 1.0;
 
     if (a.moves) {
-      tx  = clamp(rand(0, maxX), 0, maxX);
-      const dist = Math.hypot(tx - cur.x, ty - cur.y);
-      dur = Math.max(0.8, dist / a.speed);
-      // Only update facing for meaningful horizontal movement
+      tx = clamp(rand(0, maxX), 0, maxX);
+
+      if (a.diagonal) {
+        // Fly: can change both axes
+        ty = clamp(rand(a.yMin * maxY, a.yMax * maxY), 0, maxY);
+      }
+      // Walk: ty stays exactly the same — purely horizontal movement
+
+      const dist = a.diagonal
+        ? Math.hypot(tx - cur.x, ty - cur.y)
+        : Math.abs(tx - cur.x);
+      dur = Math.max(1.0, dist / a.speed);
+
       if (Math.abs(tx - cur.x) > 8) setFacing(tx > cur.x ? 1 : -1);
     } else {
-      // Gentle drift to the new Y band only
-      dur = 1.0;
+      // Non-moving actions: gently drift to the action's preferred Y band
+      ty  = clamp(rand(a.yMin * maxY, a.yMax * maxY), 0, maxY);
+      dur = 1.2;
     }
 
     posRef.current = { x: tx, y: ty };
@@ -83,30 +89,40 @@ export const CharizardPet = () => {
   }, [tick]);
 
   return (
-    <div
-      ref={wrapRef}
-      className="relative w-full h-64 md:h-80 select-none pointer-events-none overflow-hidden"
-      aria-hidden
-    >
+    // fixed inset-0: overlays the entire page, only rendered on About route
+    // z-[45]: above page content (z-10) but below navbar (z-50)
+    <div className="fixed inset-0 z-[45] pointer-events-none" aria-hidden>
       <motion.div
-        className="absolute z-20"
+        className="absolute"
         animate={{ x: pos.x, y: pos.y }}
         transition={{ duration: moveDur, ease: "easeInOut" }}
       >
-        {/* key changes on action switch → forces img remount → GIF restarts cleanly */}
-        <img
-          key={action.key}
-          src={action.src}
-          alt=""
-          width={SPRITE_W}
-          height={SPRITE_H}
-          draggable={false}
-          style={{
-            imageRendering: "pixelated",
-            transform: `scaleX(${facing})`,
-            transformOrigin: "center",
-          }}
-        />
+        {/* Separate div for the horizontal flip so it doesn't interfere with position animation */}
+        <div style={{ width: W, height: H, transform: `scaleX(${facing})`, transformOrigin: "center" }}>
+          {/* Relative container lets both GIFs stack in the same spot during the crossfade */}
+          <div className="relative" style={{ width: W, height: H }}>
+            <AnimatePresence mode="sync">
+              <motion.img
+                key={action.key}
+                src={action.src}
+                alt=""
+                width={W}
+                height={H}
+                draggable={false}
+                className="absolute inset-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, ease: "linear" }}
+                style={{
+                  imageRendering: "pixelated",
+                  background: "transparent",
+                  display: "block",
+                }}
+              />
+            </AnimatePresence>
+          </div>
+        </div>
       </motion.div>
     </div>
   );
