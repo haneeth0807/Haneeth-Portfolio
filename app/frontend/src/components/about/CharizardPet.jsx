@@ -2,18 +2,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ─── Adjust to your actual GIF pixel dimensions ──────────────────────────────
-const W = 160;
-const H = 160;
+const W = 190;
+const H = 190;
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ACTIONS = [
   // diagonal:true  → fly can move on both axes
   // diagonal:false → walk moves horizontally only (ty stays locked)
-  { key: "fly",          src: "/img/charizard/fly.gif",          weight: 40, moves: true,  diagonal: true,  yMin: 0.05, yMax: 0.55, speed: 80,  stay: [3000, 6500] },
-  { key: "walk",         src: "/img/charizard/walk.gif",         weight: 22, moves: true,  diagonal: false, yMin: 0.60, yMax: 0.92, speed: 32,  stay: [3000, 5500] },
-  { key: "idle",         src: "/img/charizard/idle.gif",         weight: 18, moves: false, diagonal: false, yMin: 0.20, yMax: 0.80, speed: 0,   stay: [4000, 8000] },
-  { key: "flamethrower", src: "/img/charizard/flamethrower.gif", weight: 12, moves: false, diagonal: false, yMin: 0.10, yMax: 0.60, speed: 0,   stay: [4000, 7000] },
-  { key: "sleep",        src: "/img/charizard/sleep.gif",        weight:  8, moves: false, diagonal: false, yMin: 0.65, yMax: 0.95, speed: 0,   stay: [8000, 16000] },
+  { key: "fly",          src: "/img/charizard/fly.webm",          weight: 40, moves: true,  diagonal: true,  yMin: 0.05, yMax: 0.55, speed: 80,  stay: [3000, 6500] },
+  { key: "walk",         src: "/img/charizard/walk.webm",         weight: 22, moves: true,  diagonal: false, yMin: 0.60, yMax: 0.92, speed: 32,  stay: [3000, 5500] },
+  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.20, yMax: 0.80, speed: 0,   stay: [4000, 8000] },
+  { key: "flamethrower", src: "/img/charizard/flamethrower.webm", weight: 12, moves: false, diagonal: false, yMin: 0.10, yMax: 0.60, speed: 0,   stay: [4000, 7000] },
+  { key: "sleep",        src: "/img/charizard/sleep.webm",        weight:  8, moves: false, diagonal: false, yMin: 0.65, yMax: 0.95, speed: 0,   stay: [8000, 16000] },
 ];
 
 const TOTAL = ACTIONS.reduce((s, a) => s + a.weight, 0);
