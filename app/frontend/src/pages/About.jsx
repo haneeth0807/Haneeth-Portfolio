@@ -5,6 +5,7 @@ import { GlowCard, SectionTitle } from "@/components/ui-kit";
 import { StoryCarousel } from "@/components/about/StoryCarousel";
 import { PhotoGallery } from "@/components/about/PhotoGallery";
 import { NowSection } from "@/components/about/NowSection";
+import { CharizardPet } from "@/components/about/CharizardPet";
 import { MeMap } from "@/components/about/MeMap";
 import { PHILOSOPHY, SIDE_PROJECTS } from "@/data/content";
 
@@ -69,7 +70,8 @@ export default function About() {
       <section className="container-x mt-28"><SectionTitle sub="A map of the things, people and places that shaped who I am. Click around.">What Makes Me, ME</SectionTitle><MeMap /></section>
       <section className="container-x mt-28"><SectionTitle sub={"Really just a bunch of things I had started as a spur of a moment thing, but I still like to cope by calling them “projects”. They are kinda cool ig, so check them out if you feel upto it."}>My Side Projects</SectionTitle><SideProjects /></section>
       <section className="container-x mt-28"><SectionTitle sub="A snapshot of what I'm up to — updated every now and then.">Me Right Now</SectionTitle><NowSection /></section>
-      <section className="container-x mt-28"><SectionTitle sub="A gallery of moments worth keeping.">A Glimpse Into My World</SectionTitle></section>
+      <div className="mt-20"><CharizardPet /></div>
+      <section className="container-x mt-4"><SectionTitle sub="A gallery of moments worth keeping.">A Glimpse Into My World</SectionTitle></section>
       <div className="mt-10 mb-16"><PhotoGallery /></div>
     </Page>
   );
