@@ -2,18 +2,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // ─── Adjust to your actual GIF pixel dimensions ──────────────────────────────
-const W = 190;
-const H = 190;
+const W = 390;
+const H = 390;
 // ─────────────────────────────────────────────────────────────────────────────
 
 const ACTIONS = [
   // diagonal:true  → fly can move on both axes
   // diagonal:false → walk moves horizontally only (ty stays locked)
-  { key: "fly",          src: "/img/charizard/fly.webm",          weight: 40, moves: true,  diagonal: true,  yMin: 0.05, yMax: 0.55, speed: 80,  stay: [3000, 6500] },
-  { key: "walk",         src: "/img/charizard/walk.webm",         weight: 22, moves: true,  diagonal: false, yMin: 0.60, yMax: 0.92, speed: 32,  stay: [3000, 5500] },
-  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.20, yMax: 0.80, speed: 0,   stay: [4000, 8000] },
-  { key: "flamethrower", src: "/img/charizard/flamethrower.webm", weight: 12, moves: false, diagonal: false, yMin: 0.10, yMax: 0.60, speed: 0,   stay: [4000, 7000] },
-  { key: "sleep",        src: "/img/charizard/sleep.webm",        weight:  8, moves: false, diagonal: false, yMin: 0.65, yMax: 0.95, speed: 0,   stay: [8000, 16000] },
+  { key: "fly",          src: "/img/charizard/fly.webm",          weight: 40, moves: true,  diagonal: true,  yMin: 0.30, yMax: 0.70, speed: 50,  stay: [5000, 7500] },
+  { key: "walk",         src: "/img/charizard/walk.webm",         weight: 22, moves: true,  diagonal: false, yMin: 0.62, yMax: 0.92, speed: 20,  stay: [5000, 7500] },
+  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.35, yMax: 0.80, speed: 0,   stay: [6000, 10000] },
+  { key: "flamethrower", src: "/img/charizard/flamethrower.webm", weight: 12, moves: false, diagonal: false, yMin: 0.30, yMax: 0.70, speed: 0,   stay: [6000, 9000] },
+  { key: "sleep",        src: "/img/charizard/sleep.webm",        weight:  8, moves: false, diagonal: false, yMin: 0.65, yMax: 0.92, speed: 0,   stay: [10000, 18000] },
 ];
 
 const TOTAL = ACTIONS.reduce((s, a) => s + a.weight, 0);
@@ -42,7 +42,7 @@ export const CharizardPet = () => {
     // Place at a sane starting position on the very first tick
     if (!posRef.current) {
       const sx = clamp(rand(maxX * 0.2, maxX * 0.8), 0, maxX);
-      const sy = clamp(rand(maxY * 0.2, maxY * 0.6), 0, maxY);
+      const sy = clamp(rand(maxY * 0.4, maxY * 0.7), 0, maxY);
       posRef.current = { x: sx, y: sy };
       setPos({ x: sx, y: sy });
     }
@@ -102,24 +102,27 @@ export const CharizardPet = () => {
           {/* Relative container lets both GIFs stack in the same spot during the crossfade */}
           <div className="relative" style={{ width: W, height: H }}>
             <AnimatePresence mode="sync">
-              <motion.img
+              <motion.video
                 key={action.key}
-                src={action.src}
-                alt=""
-                width={W}
-                height={H}
-                draggable={false}
+                autoPlay
+                loop
+                muted
+                playsInline
                 className="absolute inset-0"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease: "linear" }}
                 style={{
-                  imageRendering: "pixelated",
+                  width: W,
+                  height: H,
                   background: "transparent",
                   display: "block",
+                  objectFit: "contain",
                 }}
-              />
+              >
+                <source src={action.src} type="video/webm" />
+              </motion.video>
             </AnimatePresence>
           </div>
         </div>
