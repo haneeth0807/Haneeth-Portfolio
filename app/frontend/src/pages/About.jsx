@@ -15,7 +15,7 @@ const Intro = () => (
     <Reveal delay={1} className="mt-10 max-w-4xl mx-auto space-y-5 text-lg md:text-xl text-ink leading-relaxed">
       <p>When I was first thinking about what to include in this section, I couldn't really decide on what to say and what not to say. It was really quiet a challenge trying to make a nice structure in which to include all the things I originally wanted to write, and writing this page in general felt like I was taking an HR interview of myself.</p>
       <p>But to truly get my point across, I wanted to not just talk about my life story and my technical know-how. I wanted to talk about my philosophy as a person, what drives me and also a few of my hobbies because why not.</p>
-      <p className="text-fg">Anyways, I tried my best, so here goes →</p>
+      <p className="text-fg">Anyways, I tried my best, so here goes &rarr;</p>
     </Reveal>
   </section>
 );
@@ -67,10 +67,10 @@ export default function About() {
       <Intro />
       <section className="container-x mt-28"><SectionTitle testId="my-story-title">My Story</SectionTitle><StoryCarousel /></section>
       <section className="container-x mt-28"><SectionTitle sub="Some of the core values by which I function..">My Philosophy</SectionTitle><Philosophy /></section>
-      <section className="container-x mt-28"><SectionTitle sub="A map of the things, people and places that shaped who I am. Click around.">What Makes Me, ME</SectionTitle><MeMap /></section>
-      <section className="container-x mt-28"><SectionTitle sub={"Really just a bunch of things I had started as a spur of a moment thing, but I still like to cope by calling them “projects”. They are kinda cool ig, so check them out if you feel upto it."}>My Side Projects</SectionTitle><SideProjects /></section>
-      <section className="container-x mt-28"><SectionTitle sub="A snapshot of what I'm up to — updated every now and then.">Me Right Now</SectionTitle><NowSection /></section>
+      <section className="container-x mt-28"><SectionTitle sub="A map of the things, people and places that shaped how I think. Click around.">What Makes Me, Me</SectionTitle><MeMap /></section>
+      <section className="container-x mt-28"><SectionTitle sub="Really just a bunch of things I started on a whim, but I still like to cope by calling them 'projects'. They are kinda cool ig, so check them out if you feel up to it.">My Side Projects</SectionTitle><SideProjects /></section>
       <CharizardPet />
+      <section className="container-x mt-0"><SectionTitle sub="A snapshot of what I'm up to — updated every now and then.">Me Right Now</SectionTitle><NowSection /></section>
       <section className="container-x mt-28"><SectionTitle sub="A gallery of moments worth keeping.">A Glimpse Into My World</SectionTitle></section>
       <div className="mt-10 mb-16"><PhotoGallery /></div>
     </Page>
