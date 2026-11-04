@@ -13,7 +13,7 @@ const ZONE_H = 480;
 const ACTIONS = [
   { key: "fly",          src: "/img/charizard/fly.webm",          weight: 40, moves: true,  diagonal: true,  yMin: 0.0, yMax: 0.8,  speed: 50,  stay: [5000, 7500],   scale: 1.3  },
   { key: "walk",         src: "/img/charizard/walk.webm",         weight: 22, moves: true,  diagonal: false, yMin: 0.5, yMax: 1.0,  speed: 20,  stay: [5000, 7500],   scale: 1.0  },
-  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.0, yMax: 0.9,  speed: 0,   stay: [6000, 10000],  scale: 0.8  },
+  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.0, yMax: 0.9,  speed: 0,   stay: [6000, 10000],  scale: 0.85  },
   { key: "flamethrower", src: "/img/charizard/flamethrower.webm", weight: 12, moves: false, diagonal: false, yMin: 0.0, yMax: 0.8,  speed: 0,   stay: [6000, 9000],   scale: 1.0  },
   { key: "sleep",        src: "/img/charizard/sleep.webm",        weight:  8, moves: false, diagonal: false, yMin: 0.4, yMax: 1.0,  speed: 0,   stay: [10000, 18000], scale: 1.0  },
 ];
@@ -43,7 +43,7 @@ const SpeechBubble = ({ emoji }) => (
     exit={{    opacity: 0, scale: 0.4, y: 8 }}
     transition={{ type: "spring", stiffness: 420, damping: 18 }}
     className="absolute pointer-events-none select-none"
-    style={{ bottom: "calc(100% + 10px)", left: "50%", x: "-50%", zIndex: 30 }}
+    style={{ top: "10px", left: "50%", x: "-50%", zIndex: 30 }}
   >
     <div
       className="relative rounded-2xl px-4 py-2 text-3xl shadow-lg"
