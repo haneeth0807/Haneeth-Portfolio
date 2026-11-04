@@ -69,6 +69,7 @@ export default function About() {
       <section className="container-x mt-28"><SectionTitle sub="Some of the core values by which I function..">My Philosophy</SectionTitle><Philosophy /></section>
       <section className="container-x mt-28"><SectionTitle sub="A map of the things, people and places that shaped how I think. Click around.">What Makes Me, Me</SectionTitle><MeMap /></section>
       <section className="container-x mt-28"><SectionTitle sub="Really just a bunch of things I started on a whim, but I still like to cope by calling them 'projects'. They are kinda cool ig, so check them out if you feel up to it.">My Side Projects</SectionTitle><SideProjects /></section>
+      <section className="container-x mt-28"><SectionTitle sub="Charlie loves cookies.">Meet Charlie</SectionTitle></section>
       <CharizardPet />
       <section className="container-x mt-0"><SectionTitle sub="A snapshot of what I'm up to — updated every now and then.">Me Right Now</SectionTitle><NowSection /></section>
       <section className="container-x mt-28"><SectionTitle sub="A gallery of moments worth keeping.">A Glimpse Into My World</SectionTitle></section>

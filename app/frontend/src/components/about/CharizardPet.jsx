@@ -7,14 +7,16 @@ const H = 390;
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Container height in px — sprite roams inside this zone
-const ZONE_H = 560;
+const ZONE_H = 760;
 
+// scale: visual multiplier to normalise character size across animations.
+// Walk = 1.0 (baseline). Tune fly/idle/flamethrower until they match.
 const ACTIONS = [
-  { key: "fly",          src: "/img/charizard/fly.webm",          weight: 40, moves: true,  diagonal: true,  yMin: 0.0, yMax: 0.8,  speed: 50,  stay: [5000, 7500]   },
-  { key: "walk",         src: "/img/charizard/walk.webm",         weight: 22, moves: true,  diagonal: false, yMin: 0.5, yMax: 1.0,  speed: 20,  stay: [5000, 7500]   },
-  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.0, yMax: 0.9,  speed: 0,   stay: [6000, 10000]  },
-  { key: "flamethrower", src: "/img/charizard/flamethrower.webm", weight: 12, moves: false, diagonal: false, yMin: 0.0, yMax: 0.8,  speed: 0,   stay: [6000, 9000]   },
-  { key: "sleep",        src: "/img/charizard/sleep.webm",        weight:  8, moves: false, diagonal: false, yMin: 0.4, yMax: 1.0,  speed: 0,   stay: [10000, 18000] },
+  { key: "fly",          src: "/img/charizard/fly.webm",          weight: 40, moves: true,  diagonal: true,  yMin: 0.0, yMax: 0.8,  speed: 50,  stay: [5000, 7500],   scale: 1.4  },
+  { key: "walk",         src: "/img/charizard/walk.webm",         weight: 22, moves: true,  diagonal: false, yMin: 0.5, yMax: 1.0,  speed: 20,  stay: [5000, 7500],   scale: 1.0  },
+  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.0, yMax: 0.9,  speed: 0,   stay: [6000, 10000],  scale: 0.9  },
+  { key: "flamethrower", src: "/img/charizard/flamethrower.webm", weight: 12, moves: false, diagonal: false, yMin: 0.0, yMax: 0.8,  speed: 0,   stay: [6000, 9000],   scale: 1.0  },
+  { key: "sleep",        src: "/img/charizard/sleep.webm",        weight:  8, moves: false, diagonal: false, yMin: 0.4, yMax: 1.0,  speed: 0,   stay: [10000, 18000], scale: 1.0  },
 ];
 
 const TOTAL = ACTIONS.reduce((s, a) => s + a.weight, 0);
@@ -116,6 +118,8 @@ export const CharizardPet = () => {
                   background: "transparent",
                   display: "block",
                   objectFit: "contain",
+                  transform: `scale(${action.scale})`,
+                  transformOrigin: "center",
                 }}
               >
                 <source src={action.src} type="video/webm" />
