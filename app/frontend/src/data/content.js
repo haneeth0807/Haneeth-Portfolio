@@ -224,7 +224,7 @@ export const CURRENT_PROJECTS = [
   },
   {
     type: "Research · In progress",
-    title: "Journal paper on how you can use Brain inspired architecture to imporve LLM reasoning",
+    title: "Journal paper on how you can use Brain inspired architecture to improve LLM reasoning",
     desc: "Since I am big into learning Computational Neuroscience and Cognitive Computing, For my Honors thesis, I am researching on how you can use a brain inspired architecture to imporve Chain of thought reasoning in LLMs",
     img: "/img/brain.jpg",
   },

@@ -29,7 +29,7 @@ const Intro = () => (
   <section className="container-x">
     <PageTitle testId="work-title" className="text-center" lines={["My Professional Journey..."]} />
     <Reveal delay={0.9} className="mt-10 max-w-4xl mx-auto text-center text-lg md:text-xl text-ink leading-relaxed">
-      As mentioned earlier, I am a person who believes in being a jack of all trades. So, over the past three years as a CSE student, I have gained over 25+ certifications from top companies and international universities; been active in IEEE and student leadership roles; participated in hackathons, events, conferences; became an IBM certified AI developer and dabbled in a bit of content creation. I have a bit of a thirst to learn all things tech has to offer, so you will find me learning the most random stuff.
+      As mentioned earlier, I am a person who believes in being a jack of all trades. So, over the past three years as a CSE student, I have gained over 35+ certifications from top companies and international universities; been active in IEEE and student leadership roles; participated in hackathons, events, conferences; became an IBM certified AI developer and dabbled in a bit of content creation. I have a bit of a thirst to learn all things tech has to offer, so you will find me learning the most random stuff.
     </Reveal>
     <Reveal delay={1} className="mt-10 max-w-4xl mx-auto text-lg md:text-xl text-ink">
       <p>I'm currently looking for opportunities where I can:</p>
