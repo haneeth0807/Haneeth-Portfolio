@@ -7,6 +7,7 @@ import { PhotoGallery } from "@/components/about/PhotoGallery";
 import { NowSection } from "@/components/about/NowSection";
 import { CharizardPet } from "@/components/about/CharizardPet";
 import { MeMap } from "@/components/about/MeMap";
+import { CookieProvider } from "@/context/cookie";
 import { PHILOSOPHY, SIDE_PROJECTS } from "@/data/content";
 
 const Intro = () => (
@@ -63,6 +64,7 @@ const SideProjects = () => (
 
 export default function About() {
   return (
+    <CookieProvider>
     <Page testId="about-page">
       <Intro />
       <section className="container-x mt-28"><SectionTitle testId="my-story-title">My Story</SectionTitle><StoryCarousel /></section>
@@ -75,5 +77,6 @@ export default function About() {
       <section className="container-x mt-28"><SectionTitle sub="A gallery of moments worth keeping.">A Glimpse Into My World</SectionTitle></section>
       <div className="mt-10 mb-16"><PhotoGallery /></div>
     </Page>
+    </CookieProvider>
   );
 }

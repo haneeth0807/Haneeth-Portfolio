@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Music, BookOpen, Clapperboard, MapPin, Users, UtensilsCrossed,
   MessageSquare, Gamepad2, Volleyball, Archive, GraduationCap, ChevronLeft, ChevronRight,
+  Cookie,
 } from "lucide-react";
 import { GlowCard } from "@/components/ui-kit";
 import { EASE } from "@/components/motion";
 import { getLenis } from "@/lib/lenis";
+import { useCookie } from "@/context/cookie";
 import { ME_MAP } from "@/data/content";
 
 const ICONS = {
@@ -143,6 +145,31 @@ const Chips = ({ active, onSelect }) => (
   </div>
 );
 
+const CookieDispenser = () => {
+  const { grab, holding } = useCookie();
+  return (
+    <motion.button
+      type="button"
+      onClick={grab}
+      disabled={holding}
+      initial={{ opacity: 0, y: 18, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ type: "spring", stiffness: 160, damping: 14, delay: 0.36 }}
+      whileHover={!holding ? { y: -4, scale: 1.03 } : {}}
+      whileTap={!holding ? { scale: 0.95 } : {}}
+      className="rounded-xl border-2 border-amber-700/70 bg-amber-900/40 p-4 text-left transition-colors duration-300 hover:border-amber-500 hover:bg-amber-800/50 disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      <div className="flex items-center gap-2">
+        <Cookie className="w-5 h-5 text-amber-400" />
+        <p className="text-amber-300 font-semibold">Cookie Dispenser</p>
+      </div>
+      <p className="mt-1 text-[15px] text-amber-400/60">
+        {holding ? "Bring it to Charlie!" : "Click to grab a cookie for Charlie."}
+      </p>
+    </motion.button>
+  );
+};
+
 const Detail = ({ index }) => {
   const c = ME_MAP[index];
   const Icon = ICONS[c.key];
@@ -192,6 +219,7 @@ const Detail = ({ index }) => {
               <p className="mt-1 text-[15px] text-dim">{it.note}</p>
             </motion.div>
           ))}
+          {c.key === "food" && <CookieDispenser />}
         </div>
       </div>
     </motion.div>

@@ -1,30 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCookie } from "@/context/cookie";
 
-// ─── Adjust to your actual sprite dimensions ─────────────────────────────────
 const W = 390;
 const H = 390;
-// ─────────────────────────────────────────────────────────────────────────────
-
 const ZONE_H = 480;
 
-// scale: visual multiplier to normalise character size across animations.
-// Walk = 1.0 (baseline). Tune fly/idle/flamethrower until they match.
+const COOKIE_ACTION = {
+  key: "cookie", src: "/img/charizard/cookie.webm", weight: 0, moves: false,
+  diagonal: false, yMin: 0, yMax: 1, speed: 0, stay: [5000, 5000], scale: 1.0,
+};
+
 const ACTIONS = [
   { key: "fly",          src: "/img/charizard/fly.webm",          weight: 40, moves: true,  diagonal: true,  yMin: 0.0, yMax: 0.8,  speed: 50,  stay: [5000, 7500],   scale: 1.3  },
   { key: "walk",         src: "/img/charizard/walk.webm",         weight: 22, moves: true,  diagonal: false, yMin: 0.5, yMax: 1.0,  speed: 20,  stay: [5000, 7500],   scale: 1.0  },
-  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.0, yMax: 0.9,  speed: 0,   stay: [6000, 10000],  scale: 0.85  },
+  { key: "idle",         src: "/img/charizard/idle.webm",         weight: 18, moves: false, diagonal: false, yMin: 0.0, yMax: 0.9,  speed: 0,   stay: [6000, 10000],  scale: 0.85 },
   { key: "flamethrower", src: "/img/charizard/flamethrower.webm", weight: 12, moves: false, diagonal: false, yMin: 0.0, yMax: 0.8,  speed: 0,   stay: [6000, 9000],   scale: 1.0  },
   { key: "sleep",        src: "/img/charizard/sleep.webm",        weight:  8, moves: false, diagonal: false, yMin: 0.4, yMax: 1.0,  speed: 0,   stay: [10000, 18000], scale: 1.0  },
 ];
 
-// Emoji shown in the speech bubble per action
 const BUBBLES = {
   fly:          "🔥",
   walk:         "👋",
   idle:         "😊",
   flamethrower: "💥",
   sleep:        "💤",
+  cookie:       "🍪",
 };
 
 const TOTAL = ACTIONS.reduce((s, a) => s + a.weight, 0);
@@ -50,7 +51,6 @@ const SpeechBubble = ({ emoji }) => (
       style={{ background: "rgb(var(--c-fg))", whiteSpace: "nowrap" }}
     >
       {emoji}
-      {/* triangle tail */}
       <span
         className="absolute left-1/2 top-full -translate-x-1/2"
         style={{
@@ -65,9 +65,11 @@ const SpeechBubble = ({ emoji }) => (
 );
 
 export const CharizardPet = () => {
-  const wrapRef  = useRef(null);
-  const posRef   = useRef(null);
-  const timerRef = useRef(null);
+  const wrapRef   = useRef(null);
+  const spriteRef = useRef(null);
+  const posRef    = useRef(null);
+  const timerRef  = useRef(null);
+  const eatingRef = useRef(false);
 
   const [action,  setAction]  = useState(ACTIONS[0]);
   const [pos,     setPos]     = useState({ x: -400, y: 0 });
@@ -75,7 +77,37 @@ export const CharizardPet = () => {
   const [facing,  setFacing]  = useState(1);
   const [hovered, setHovered] = useState(false);
 
+  const { holding, charliePosRef, setOnFed } = useCookie();
+
+  // Keep charliePosRef in sync so cookie context knows where Charlie is
+  useEffect(() => {
+    const update = () => {
+      if (spriteRef.current) {
+        charliePosRef.current = spriteRef.current.getBoundingClientRect();
+      }
+      animId = requestAnimationFrame(update);
+    };
+    let animId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(animId);
+  }, [charliePosRef]);
+
+  // Register the "fed" callback
+  useEffect(() => {
+    setOnFed(() => {
+      eatingRef.current = true;
+      clearTimeout(timerRef.current);
+      setAction(COOKIE_ACTION);
+      setHovered(true);
+      timerRef.current = setTimeout(() => {
+        eatingRef.current = false;
+        setHovered(false);
+        tick();
+      }, COOKIE_ACTION.stay[0]);
+    });
+  }, [setOnFed]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const tick = useCallback(() => {
+    if (eatingRef.current) return;
     const wrap = wrapRef.current;
     if (!wrap) return;
 
@@ -123,6 +155,9 @@ export const CharizardPet = () => {
     return () => clearTimeout(timerRef.current);
   }, [tick]);
 
+  // When holding a cookie, make Charlie glow/pulse to hint you should bring it to him
+  const holdingHighlight = holding && !eatingRef.current;
+
   return (
     <div
       ref={wrapRef}
@@ -135,26 +170,31 @@ export const CharizardPet = () => {
         animate={{ x: pos.x, y: pos.y }}
         transition={{ duration: moveDur, ease: "easeInOut" }}
       >
-        {/* W x H wrapper — holds both bubble and sprite so bubble isn't flipped */}
-        <div className="relative" style={{ width: W, height: H }}>
-
-          {/* Speech bubble — sits above the sprite, unaffected by facing flip */}
+        <div ref={spriteRef} className="relative" style={{ width: W, height: H }}>
           <AnimatePresence>
-            {hovered && <SpeechBubble key={action.key} emoji={BUBBLES[action.key]} />}
+            {(hovered || eatingRef.current) && (
+              <SpeechBubble key={action.key} emoji={BUBBLES[action.key] || "😊"} />
+            )}
           </AnimatePresence>
 
-          {/* Flip container for left/right direction */}
           <div
-            style={{ width: W, height: H, transform: `scaleX(${facing})`, transformOrigin: "center", pointerEvents: "auto" }}
+            style={{
+              width: W, height: H,
+              transform: `scaleX(${facing})`,
+              transformOrigin: "center",
+              pointerEvents: "auto",
+              filter: holdingHighlight ? "drop-shadow(0 0 20px rgba(255, 180, 50, 0.7))" : "none",
+              transition: "filter 0.3s ease",
+            }}
             onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
+            onMouseLeave={() => { if (!eatingRef.current) setHovered(false); }}
           >
             <div className="relative" style={{ width: W, height: H }}>
               <AnimatePresence mode="sync">
                 <motion.video
                   key={action.key}
                   autoPlay
-                  loop
+                  loop={action.key !== "cookie"}
                   muted
                   playsInline
                   className="absolute inset-0"
