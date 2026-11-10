@@ -64,8 +64,8 @@ const SideProjects = () => (
 
 export default function About() {
   return (
-    <CookieProvider>
     <Page testId="about-page">
+    <CookieProvider>
       <Intro />
       <section className="container-x mt-28"><SectionTitle testId="my-story-title">My Story</SectionTitle><StoryCarousel /></section>
       <section className="container-x mt-28"><SectionTitle sub="Some of the core values by which I function..">My Philosophy</SectionTitle><Philosophy /></section>
@@ -76,7 +76,7 @@ export default function About() {
       <section className="container-x mt-0"><SectionTitle sub="A snapshot of what I'm up to — updated every now and then.">Me Right Now</SectionTitle><NowSection /></section>
       <section className="container-x mt-28"><SectionTitle sub="A gallery of moments worth keeping.">A Glimpse Into My World</SectionTitle></section>
       <div className="mt-10 mb-16"><PhotoGallery /></div>
-    </Page>
     </CookieProvider>
+    </Page>
   );
 }
