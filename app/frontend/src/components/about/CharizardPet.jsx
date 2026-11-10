@@ -104,7 +104,7 @@ export const CharizardPet = () => {
         tick();
       }, COOKIE_ACTION.stay[0]);
     });
-  }, [setOnFed]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [setOnFed, tick]);
 
   const tick = useCallback(() => {
     if (eatingRef.current) return;
