@@ -23,11 +23,17 @@ from datetime import datetime, timezone
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-client = AsyncIOMotorClient(os.environ['MONGO_URL'])
-db = client[os.environ['DB_NAME']]
-
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+# A bad MONGO_URL must not stop the API from booting; contacts just won't be stored.
+try:
+    client = AsyncIOMotorClient(os.environ['MONGO_URL'].strip().strip('"\''))
+    db = client[os.environ['DB_NAME']]
+except Exception as e:
+    logger.error(f"MongoDB disabled, check MONGO_URL: {e}")
+    client = None
+    db = None
 
 EMAIL_FROM_NAME = os.environ["EMAIL_FROM_NAME"]
 GMAIL_USER     = os.environ["GMAIL_USER"]
@@ -198,9 +204,14 @@ async def _notify_owner(contact_id: str, name: str, email: str, message: str):
             html=_contact_template(name, email, message),
             reply_to=email,
         )
-        await db.contacts.update_one({"id": contact_id}, {"$set": {"email_sent": True}})
     except Exception as e:
         logger.error(f"Contact email failed: {e}")
+        return
+    if db is not None:
+        try:
+            await db.contacts.update_one({"id": contact_id}, {"$set": {"email_sent": True}})
+        except Exception as e:
+            logger.warning(f"MongoDB update failed: {e}")
 
 
 @api_router.post("/contact", response_model=ContactOut)
@@ -214,10 +225,11 @@ async def create_contact(payload: ContactIn, request: Request, background: Backg
 
     doc = ContactOut(id=str(uuid.uuid4()), name=payload.name, email=payload.email,
                      message=payload.message, created_at=datetime.now(timezone.utc).isoformat())
-    try:
-        await db.contacts.insert_one({**doc.model_dump(), "email_sent": False})
-    except Exception as e:
-        logger.warning(f"MongoDB insert failed (email will still send): {e}")
+    if db is not None:
+        try:
+            await db.contacts.insert_one({**doc.model_dump(), "email_sent": False})
+        except Exception as e:
+            logger.warning(f"MongoDB insert failed (email will still send): {e}")
     background.add_task(_notify_owner, doc.id, doc.name, doc.email, doc.message)
     return doc
 
@@ -262,4 +274,5 @@ app.add_middleware(
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    if client is not None:
+        client.close()
