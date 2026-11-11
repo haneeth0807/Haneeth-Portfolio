@@ -8,7 +8,7 @@ const ZONE_H = 480;
 
 const COOKIE_ACTION = {
   key: "cookie", src: "/img/charizard/cookie.webm", weight: 0, moves: false,
-  diagonal: false, yMin: 0, yMax: 1, speed: 0, stay: [5000, 5000], scale: 1.0,
+  diagonal: false, yMin: 0, yMax: 1, speed: 0, stay: [10000, 10000], scale: 1.0,
 };
 
 const ACTIONS = [
@@ -44,7 +44,7 @@ const SpeechBubble = ({ emoji }) => (
     exit={{    opacity: 0, scale: 0.4, y: 8 }}
     transition={{ type: "spring", stiffness: 420, damping: 18 }}
     className="absolute pointer-events-none select-none"
-    style={{ top: "10px", left: "50%", x: "-50%", zIndex: 30 }}
+    style={{ top: "8px", left: "50%", x: "-50%", zIndex: 30 }}
   >
     <div
       className="relative rounded-2xl px-4 py-2 text-3xl shadow-lg"
@@ -90,21 +90,6 @@ export const CharizardPet = () => {
     let animId = requestAnimationFrame(update);
     return () => cancelAnimationFrame(animId);
   }, [charliePosRef]);
-
-  // Register the "fed" callback
-  useEffect(() => {
-    setOnFed(() => {
-      eatingRef.current = true;
-      clearTimeout(timerRef.current);
-      setAction(COOKIE_ACTION);
-      setHovered(true);
-      timerRef.current = setTimeout(() => {
-        eatingRef.current = false;
-        setHovered(false);
-        tick();
-      }, COOKIE_ACTION.stay[0]);
-    });
-  }, [setOnFed, tick]);
 
   const tick = useCallback(() => {
     if (eatingRef.current) return;
@@ -154,6 +139,21 @@ export const CharizardPet = () => {
     timerRef.current = setTimeout(tick, 700);
     return () => clearTimeout(timerRef.current);
   }, [tick]);
+
+  // Register the "fed" callback — must be after tick is defined
+  useEffect(() => {
+    setOnFed(() => {
+      eatingRef.current = true;
+      clearTimeout(timerRef.current);
+      setAction(COOKIE_ACTION);
+      setHovered(true);
+      timerRef.current = setTimeout(() => {
+        eatingRef.current = false;
+        setHovered(false);
+        tick();
+      }, COOKIE_ACTION.stay[0]);
+    });
+  }, [setOnFed, tick]);
 
   // When holding a cookie, make Charlie glow/pulse to hint you should bring it to him
   const holdingHighlight = holding && !eatingRef.current;
