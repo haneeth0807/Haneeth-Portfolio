@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { GlowCard, Eyebrow } from "@/components/ui-kit";
@@ -15,6 +15,32 @@ const ArrowBtn = ({ onClick, children, testId, label }) => (
     {children}
   </button>
 );
+
+// Only claims the wheel from the page-level smooth scroller when its text really overflows.
+const StoryText = ({ paragraphs }) => {
+  const ref = useRef(null);
+  const [overflowing, setOverflowing] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setOverflowing(el.scrollHeight > el.clientHeight + 1);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [paragraphs]);
+
+  return (
+    <div
+      ref={ref}
+      {...(overflowing ? { "data-lenis-prevent": "" } : {})}
+      className="mt-4 max-w-xl mx-auto w-full space-y-4 text-lg text-dim overflow-y-auto flex-1 pr-2"
+    >
+      {paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+    </div>
+  );
+};
 
 export const StoryCarousel = () => {
   const [[idx, dir], setState] = useState([1, 0]);
@@ -43,12 +69,7 @@ export const StoryCarousel = () => {
             >
               <span className="font-mono text-xs text-accent shrink-0">0{idx + 1} / 0{STORY.length}</span>
               <h3 className="mt-3 font-display font-bold text-2xl md:text-3xl text-fg shrink-0">{cur.title}</h3>
-              <div
-                data-lenis-prevent
-                className="mt-4 max-w-xl mx-auto w-full space-y-4 text-lg text-dim overflow-y-auto overscroll-contain flex-1 pr-2"
-              >
-                {[].concat(cur.text).map((p, i) => <p key={i}>{p}</p>)}
-              </div>
+              <StoryText paragraphs={[].concat(cur.text)} />
             </motion.div>
           </AnimatePresence>
           <div className="absolute bottom-6 inset-x-0 flex justify-center gap-2">
